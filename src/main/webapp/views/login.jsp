@@ -34,7 +34,8 @@
                     </form>
                 </div>
                 <div class="card-footer text-center">
-                    Chưa có tài khoản? <a href="${pageContext.request.contextPath}/register">Đăng ký ngay</a>
+                    Chưa có tài khoản? <a href="${pageContext.request.contextPath}/register">Đăng ký ngay</a> | 
+                    <a href="${pageContext.request.contextPath}/forgotPassword">Quên mật khẩu</a>
                     <br>
                     <a href="${pageContext.request.contextPath}/home">Quay về trang chủ</a>
                 </div>

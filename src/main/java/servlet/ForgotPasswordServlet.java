@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class ForgotPasswordServlet extends HttpServlet {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private UserDAO dao = new UserDAOImpl();
@@ -26,6 +26,7 @@ public class ForgotPasswordServlet extends HttpServlet {
 		req.getRequestDispatcher("/views/forgotPassword.jsp").forward(req, resp);
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// TODO Auto-generated method stub
