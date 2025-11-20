@@ -1,8 +1,12 @@
 package servlet;
 
 import java.io.IOException;
+import java.util.List;
 
+import dao.VideoDAO;
+import dao.impl.VideoDAOImpl;
 import entity.User;
+import entity.Video;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -17,6 +21,8 @@ public class Index extends HttpServlet {
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
+
+	private VideoDAO videoDAO = new VideoDAOImpl();
 
 	public Index() {
 		// TODO Auto-generated constructor stub
@@ -53,6 +59,10 @@ public class Index extends HttpServlet {
 		// Xu ly cho user(trang chu)
 		else {
 			if (uri.contains("/home")) {
+				// Lấy danh sách video từ db
+				List<Video> list = videoDAO.findAll();
+				// Hứng JSP
+				req.setAttribute("items", list);
 				req.setAttribute("page", "/views/user/home.jsp");
 			}
 		}

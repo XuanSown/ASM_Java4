@@ -23,8 +23,8 @@
         .hero-header {
             background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%); /* Gradient Xanh dương */
             color: white;
-            padding: 3rem 0;
-            margin-bottom: 2rem;
+            padding: 1rem 0;
+            margin-bottom: 1rem;
             border-radius: 0 0 20px 20px; /* Bo tròn góc dưới */
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
@@ -142,7 +142,7 @@
     <header class="hero-header text-center">
         <div class="container">
             <h1 class="display-5 fw-bold">Khám Phá Thế Giới Giải Trí</h1>
-            <p class="lead mb-0">Xem video chất lượng cao, chia sẻ khoảnh khắc yêu thích của bạn</p>
+            <p class="lead mb-0">Nền tảng chia sẻ video giải trí hàng đầu dành cho sinh viên FPT Polytechnic</p>
         </div>
     </header>
 
@@ -156,8 +156,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6 mb-3 mb-md-0">
-                    <h5 class="text-primary fw-bold">SOWN TUBE</h5>
-                    <p class="small text-muted">Nền tảng chia sẻ video giải trí hàng đầu dành cho sinh viên FPT Polytechnic.</p>
+                    <h1 class="text-primary fw-bold">SOWN TUBE</h5>
                 </div>
                 <div class="col-md-3 mb-3 mb-md-0">
                     <h6 class="fw-bold">Liên kết nhanh</h6>
