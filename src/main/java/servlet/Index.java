@@ -2,6 +2,7 @@ package servlet;
 
 import java.io.IOException;
 
+import entity.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -23,26 +24,39 @@ public class Index extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		String uri = req.getRequestURI();
-		if (uri.contains("/home")) {
-			req.setAttribute("page", "/views/user/home.jsp");
+		// Mac dinh dung layout user
+		String layout = "/views/userPageLayout.jsp";
+
+		// Xu ly cho admin
+		if (uri.contains("/admin/")) {
+			User user = (User) req.getSession().getAttribute("currentUser");
+			if (user == null || !user.getAdmin()) {
+				resp.sendRedirect(req.getContextPath() + "/login?message=AccessDenied");
+				return;
+			}
+			layout = "/views/adminPageLayout.jsp";
+
+			if (uri.contains("/admin/videoManager")) {
+				req.setAttribute("page", "/views/admin/VideoManager.jsp");
+			} else if (uri.contains("/admin/userManager")) {
+				req.setAttribute("page", "/views/admin/UserManager.jsp");
+			} else if (uri.contains("/admin/video/details")) {
+				req.setAttribute("page", "/views/admin/VideoManager.jsp");
+				req.setAttribute("sublpage", "/views/admin/VideoDetails.jsp");
+			} else if (uri.contains("/admin/video/list")) {
+				req.setAttribute("page", "/views/admin/VideoManager.jsp");
+				req.setAttribute("sublpage", "/views/admin/VideoList.jsp");
+			}
 		}
-		if (uri.contains("/admin/videoManager")) {
-			req.setAttribute("page", "/views/admin/VideoManager.jsp");
+
+		// Xu ly cho user(trang chu)
+		else {
+			if (uri.contains("/home")) {
+				req.setAttribute("page", "/views/user/home.jsp");
+			}
 		}
-		if (uri.contains("/admin/userManager")) {
-			req.setAttribute("page", "/views/admin/UserManager.jsp");
-		}
-		if (uri.contains("/admin/video/details")) {
-			req.setAttribute("page", "/views/admin/VideoManager.jsp");
-			req.setAttribute("sublpage", "/views/admin/VideoDetails.jsp");
-		}
-		if (uri.contains("/admin/video/list")) {
-			req.setAttribute("page", "/views/admin/VideoManager.jsp");
-			req.setAttribute("sublpage", "/views/admin/VideoList.jsp");
-		}
-		req.getRequestDispatcher("/views/adminPageLayout.jsp").forward(req, resp);
+		req.getRequestDispatcher(layout).forward(req, resp);
 	}
 
 	@Override
