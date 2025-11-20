@@ -24,6 +24,8 @@ public class Video {
 	private String description;
 	@Column(name = "Active")
 	private Boolean active;
+	@Column(name = "Link")
+	private String link;
 
 	@OneToMany(mappedBy = "video")
 	private List<Favorite> favorites;
@@ -35,7 +37,7 @@ public class Video {
 	}
 
 	public Video(String id, String title, String poster, Integer views, String description, Boolean active,
-			List<Favorite> favorites, List<Share> shares) {
+			List<Favorite> favorites, List<Share> shares, String link) {
 		super();
 		this.id = id;
 		this.title = title;
@@ -45,6 +47,7 @@ public class Video {
 		this.active = active;
 		this.favorites = favorites;
 		this.shares = shares;
+		this.link = link;
 	}
 
 	public String getId() {
@@ -109,6 +112,14 @@ public class Video {
 
 	public void setShares(List<Share> shares) {
 		this.shares = shares;
+	}
+
+	public String getLink() {
+		return link;
+	}
+
+	public void setLink(String link) {
+		this.link = link;
 	}
 
 }
