@@ -59,10 +59,42 @@ public class Index extends HttpServlet {
 		// Xu ly cho user(trang chu)
 		else {
 			if (uri.contains("/home")) {
-				// Lấy danh sách video từ db
-				List<Video> list = videoDAO.findAll();
-				// Hứng JSP
+				String pageParam = req.getParameter("page");
+				int page = 1; // Mac dinh trang la 1
+				if (pageParam != null) {
+					try {
+						page = Integer.parseInt(pageParam);
+					} catch (NumberFormatException e) {
+						// TODO: handle exception
+						page = 1;
+					}
+				}
+				// So luong video moi trang
+				int pageSize = 9;
+
+				// 3. Tính tổng số video và tổng số trang
+				// Lưu ý: Để tối ưu nên viết hàm count() trong DAO, nhưng tạm thời dùng
+				// findAll().size()
+				List<Video> allVideos = videoDAO.findAll();
+				int totalVideos = allVideos.size();
+				int maxPage = (int) Math.ceil((double) totalVideos / pageSize);
+
+				// Kiểm tra nếu page vượt quá maxPage
+				if (page > maxPage && maxPage > 0) {
+					page = maxPage;
+				}
+				if (page < 1) {
+					page = 1;
+				}
+
+				// 4. Lấy danh sách video theo phân trang
+				// Hàm này bạn đã có sẵn trong VideoDAOImpl
+				List<Video> list = videoDAO.findAll(page, pageSize);
+
+				// 5. Gửi dữ liệu sang JSP
 				req.setAttribute("items", list);
+				req.setAttribute("currentPage", page);
+				req.setAttribute("maxPage", maxPage);
 				req.setAttribute("page", "/views/user/home.jsp");
 			}
 		}
