@@ -49,10 +49,10 @@ public class Index extends HttpServlet {
 				req.setAttribute("page", "/views/admin/UserManager.jsp");
 			} else if (uri.contains("/admin/video/details")) {
 				req.setAttribute("page", "/views/admin/VideoManager.jsp");
-				req.setAttribute("sublpage", "/views/admin/VideoDetails.jsp");
+				req.setAttribute("subpage", "/views/admin/VideoDetails.jsp");
 			} else if (uri.contains("/admin/video/list")) {
 				req.setAttribute("page", "/views/admin/VideoManager.jsp");
-				req.setAttribute("sublpage", "/views/admin/VideoList.jsp");
+				req.setAttribute("subpage", "/views/admin/VideoList.jsp");
 			}
 		}
 
