@@ -26,7 +26,6 @@ public class ForgotPasswordServlet extends HttpServlet {
 		req.getRequestDispatcher("/views/forgotPassword.jsp").forward(req, resp);
 	}
 
-	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// TODO Auto-generated method stub
@@ -37,7 +36,7 @@ public class ForgotPasswordServlet extends HttpServlet {
 			User user = dao.findById(id);
 			if (user == null) {
 				req.setAttribute("message", "Tên đăng nhập không tồn tại");
-			} else if (!user.getAdmin().equals(email)) {
+			} else if (!user.getEmail().equals(email)) {
 				req.setAttribute("message", "Email không khớp với tài khoản");
 			} else {
 				req.setAttribute("message", "Mật khẩu của bạn là: " + user.getPassword());

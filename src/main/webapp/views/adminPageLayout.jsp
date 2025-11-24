@@ -42,11 +42,11 @@
 						href="${pageContext.request.contextPath}/admin/videoManager">Quản
 							lý Video </a></li>
 					<li class="nav-item"><a class="nav-link"
-						href="${pageContext.request.contextPath}/admin/userManager">Quản lý Người dùng
-					</a></li>
+						href="${pageContext.request.contextPath}/admin/userManager">Quản
+							lý Người dùng </a></li>
 					<li class="nav-item"><a class="nav-link"
-						href="${pageContext.request.contextPath}/admin/report">Báo cáo - Thống kê
-					</a></li>
+						href="${pageContext.request.contextPath}/admin/report">Báo cáo
+							- Thống kê </a></li>
 				</ul>
 
 				<ul class="navbar-nav ms-auto align-items-center">
