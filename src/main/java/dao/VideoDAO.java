@@ -21,4 +21,7 @@ public interface VideoDAO {
 
 	// Hàm tăng view
 	void increaseViews(String id);
+
+	// hàm thịnh hành
+	List<Video> findTrending(int limit);
 }

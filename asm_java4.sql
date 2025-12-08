@@ -50,6 +50,14 @@ create table Share(
 );
 go
 
+create table ChatMessage(
+    Id bigint identity(1,1) primary key,
+    UserId nvarchar(50) not null,
+    Content nvarchar(max) not null,
+    CreatedDate datetime default getdate(),
+    foreign key (UserId) references Users(Id)
+);
+
 -- 2. DỮ LIỆU MẪU BẢNG Users (10 BẢN GHI)
 INSERT INTO Users (Id, Password, Email, Fullname, Admin) VALUES
 (N'u01', N'123', N'teo@gmail.com', N'Nguyễn Văn Tèo', 0),

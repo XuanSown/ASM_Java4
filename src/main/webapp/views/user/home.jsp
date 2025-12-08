@@ -3,6 +3,17 @@
 <%@ taglib uri="jakarta.tags.core" prefix="c"%>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt"%>
 
+<div class="mb-4">
+	<c:choose>
+		<c:when test="${isTrending}">
+			<h3 class="fw-bold text-danger border-bottom pb-2">
+				<i class="bi bi-fire me-2"></i>TOP 5 VIDEO THỊNH HÀNH
+			</h3>
+		</c:when>
+		<c:otherwise>
+		</c:otherwise>
+	</c:choose>
+</div>
 
 <div class="row g-4">
 	<c:forEach items="${items}" var="item">
@@ -35,17 +46,18 @@
 				</div>
 
 				<div
-					class="card-footer bg-white border-top-0 d-flex justify-content-between pb-3">
+					class="card-footer bg-transparent border-0 d-flex justify-content-between pb-4 px-3">
 					<a
 						href="${pageContext.request.contextPath}/video/like?id=${item.id}"
-						class="btn btn-success flex-grow-1 me-2"> <i
-						class="bi bi-hand-thumbs-up-fill me-1"></i> Like
+						class="btn btn-outline-danger rounded-pill flex-grow-1 me-2 fw-bold btn-hover-effect">
+						<i class="bi bi-heart me-1"></i> Yêu thích
 					</a>
+
 					<button type="button"
-						class="btn btn-warning text-white flex-grow-1"
+						class="btn btn-outline-primary rounded-pill flex-grow-1 fw-bold btn-hover-effect"
 						data-bs-toggle="modal" data-bs-target="#shareModal"
 						onclick="shareVideo('${item.id}')">
-						<i class="bi bi-share-fill me-1"></i> Share
+						<i class="bi bi-share-fill me-1"></i> Chia sẻ
 					</button>
 				</div>
 			</div>
@@ -88,37 +100,42 @@
 
 <!-- modal của share -->
 <div class="modal fade" id="shareModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold">Chia sẻ Video</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="${pageContext.request.contextPath}/video/share" method="post">
-                <div class="modal-body">
-                    <input type="hidden" name="videoId" id="shareVideoId">
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Nhập Email người nhận:</label>
-                        <input type="email" name="email" class="form-control" placeholder="name@example.com" required>
-                        <div class="form-text">Hệ thống sẽ gửi đường dẫn video này qua email cho họ.</div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-send-fill me-1"></i> Gửi ngay
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title fw-bold">Chia sẻ Video</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"
+					aria-label="Close"></button>
+			</div>
+			<form action="${pageContext.request.contextPath}/video/share"
+				method="post">
+				<div class="modal-body">
+					<input type="hidden" name="videoId" id="shareVideoId">
+
+					<div class="mb-3">
+						<label class="form-label">Nhập Email người nhận:</label> <input
+							type="email" name="email" class="form-control"
+							placeholder="name@example.com" required>
+						<div class="form-text">Hệ thống sẽ gửi đường dẫn video này
+							qua email cho họ.</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						data-bs-dismiss="modal">Hủy</button>
+					<button type="submit" class="btn btn-primary">
+						<i class="bi bi-send-fill me-1"></i> Gửi ngay
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
 </div>
 
 <script>
-    function shareVideo(id) {
-        // Tìm ô input ẩn có id="shareVideoId" và gán giá trị ID video vào
-        var inputId = document.getElementById('shareVideoId');
-        inputId.value = id;
-    }
+	function shareVideo(id) {
+		// Tìm ô input ẩn có id="shareVideoId" và gán giá trị ID video vào
+		var inputId = document.getElementById('shareVideoId');
+		inputId.value = id;
+	}
 </script>

@@ -21,7 +21,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet({ "/home", "/video/detail", "/admin/videoManager", "/admin/userManager", "/admin/report",
+@WebServlet({ "/home", "/trending", "/video/detail", "/admin/videoManager", "/admin/userManager", "/admin/report",
 		"/admin/video/list", "/admin/video/details", "/admin/video/edit" })
 public class Index extends HttpServlet {
 
@@ -112,47 +112,67 @@ public class Index extends HttpServlet {
 		// Xu ly cho user(trang chu)
 		else {
 			if (uri.contains("/home")) {
-				String pageParam = req.getParameter("page");
-				int page = 1; // Mac dinh trang la 1
-				if (pageParam != null) {
-					try {
-						page = Integer.parseInt(pageParam);
-					} catch (NumberFormatException e) {
-						// TODO: handle exception
+				String keyword = req.getParameter("keyword");
+
+				// 1. TRƯỜNG HỢP CÓ TỪ KHÓA TÌM KIẾM
+				if (keyword != null && !keyword.trim().isEmpty()) {
+					List<Video> list = videoDAO.findByTitle(keyword);
+					req.setAttribute("items", list);
+					req.setAttribute("currentPage", 1);
+					req.setAttribute("maxPage", 1);
+					// Giữ lại từ khóa ở ô input để người dùng biết mình đang tìm gì
+					req.setAttribute("keyword", keyword);
+					req.setAttribute("page", "/views/user/home.jsp");
+				}
+
+				// 2. TRƯỜNG HỢP KHÔNG TÌM KIẾM (CHẠY LOGIC PHÂN TRANG CŨ)
+				else {
+					String pageParam = req.getParameter("page");
+					int page = 1;
+					if (pageParam != null) {
+						try {
+							page = Integer.parseInt(pageParam);
+						} catch (NumberFormatException e) {
+							page = 1;
+						}
+					}
+					int pageSize = 6;
+
+					// Đếm số lượng video đang hoạt động (Active = true)
+					List<Video> allVideos = videoDAO.findAll();
+					int totalVideos = 0;
+					for (Video v : allVideos) {
+						if (Boolean.TRUE.equals(v.getActive())) {
+							totalVideos++;
+						}
+					}
+
+					int maxPage = (int) Math.ceil((double) totalVideos / pageSize);
+					if (page > maxPage && maxPage > 0) {
+						page = maxPage;
+					}
+					if (page < 1) {
 						page = 1;
 					}
-				}
-				// So luong video moi trang
-				int pageSize = 6;
 
-				// 3. Tính tổng số video và tổng số trang
-				// Lưu ý: Để tối ưu nên viết hàm count() trong DAO, nhưng tạm thời dùng
-				// findAll().size()
-				List<Video> allVideos = videoDAO.findAll();
-				int totalVideos = 0;
-				for (Video v : allVideos) {
-					if (Boolean.TRUE.equals(v.getActive())) {
-						totalVideos++;
-					}
-				}
-				int maxPage = (int) Math.ceil((double) totalVideos / pageSize);
+					// Lấy danh sách video phân trang
+					List<Video> list = videoDAO.findAll(page, pageSize);
 
-				// Kiểm tra nếu page vượt quá maxPage
-				if (page > maxPage && maxPage > 0) {
-					page = maxPage;
+					req.setAttribute("items", list);
+					req.setAttribute("currentPage", page);
+					req.setAttribute("maxPage", maxPage);
+					req.setAttribute("page", "/views/user/home.jsp");
 				}
-				if (page < 1) {
-					page = 1;
-				}
+			}
 
-				// 4. Lấy danh sách video theo phân trang
-				// Hàm này bạn đã có sẵn trong VideoDAOImpl
-				List<Video> list = videoDAO.findAll(page, pageSize);
-
-				// 5. Gửi dữ liệu sang JSP
+			else if (uri.contains("/trending")) {
+				// Lấy Top 5 video xem nhiều nhất
+				List<Video> list = videoDAO.findTrending(5);
 				req.setAttribute("items", list);
-				req.setAttribute("currentPage", page);
-				req.setAttribute("maxPage", maxPage);
+
+				// Tái sử dụng giao diện home.jsp nhưng mình sẽ thêm 1 biến để hiển thị tiêu đề
+				// khác
+				req.setAttribute("isTrending", true);
 				req.setAttribute("page", "/views/user/home.jsp");
 			}
 

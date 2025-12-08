@@ -152,4 +152,22 @@ public class VideoDAOImpl implements VideoDAO {
 		}
 	}
 
+	@Override
+	public List<Video> findTrending(int limit) {
+		// TODO Auto-generated method stub
+		EntityManager em = XJPA.getEntityManager();
+		try {
+			// Lấy video đang hoạt động, sắp xếp Views giảm dần
+			String jpql = "SELECT v FROM Video v WHERE v.active = true ORDER BY v.views DESC";
+			TypedQuery<Video> query = em.createQuery(jpql, Video.class);
+
+			// Giới hạn số lượng kết quả (ví dụ: top 5)
+			query.setMaxResults(limit);
+
+			return query.getResultList();
+		} finally {
+			em.close();
+		}
+	}
+
 }
