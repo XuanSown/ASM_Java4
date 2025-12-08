@@ -96,4 +96,18 @@ public class FavoriteDAOImpl implements FavoriteDAO {
 		}
 	}
 
+	@Override
+	public List<Object[]> reportFavorites() {
+		EntityManager em = XJPA.getEntityManager();
+		try {
+			String jpql = "SELECT f.video.title, COUNT(f), MIN(f.likeDate), MAX(f.likeDate) "
+					+ "FROM Favorite f GROUP BY f.video.title";
+			TypedQuery<Object[]> query = em.createQuery(jpql, Object[].class);
+			return query.getResultList();
+		} finally {
+			// TODO: handle finally clause
+			em.close();
+		}
+	}
+
 }

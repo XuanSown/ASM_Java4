@@ -93,7 +93,7 @@ public class VideoDAOImpl implements VideoDAO {
 		// TODO Auto-generated method stub
 		EntityManager em = XJPA.getEntityManager();
 		try {
-			String jpql = "select v from Video v";
+			String jpql = "select v from Video v where v.active = true";
 			TypedQuery<Video> query = em.createQuery(jpql, Video.class);
 			query.setFirstResult((pageNumber - 1) * pageSize);
 			query.setMaxResults(pageSize);

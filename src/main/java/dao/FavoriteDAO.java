@@ -14,4 +14,6 @@ public interface FavoriteDAO {
 	void create(Favorite favorite);
 
 	void delete(Long id); // xóa theo id bảng Favorite
+
+	List<Object[]> reportFavorites();
 }

@@ -36,9 +36,9 @@ public class VideoAdminServlet extends HttpServlet {
 	private void save(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
 			Video video = new Video();
-			video.setId("id");
-			video.setTitle("title");
-			video.setDescription("description");
+			video.setId(req.getParameter("id"));
+			video.setTitle(req.getParameter("title"));
+			video.setDescription(req.getParameter("description"));
 
 			// active
 			boolean active = req.getParameter("active") != null;

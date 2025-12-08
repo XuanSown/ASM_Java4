@@ -4,10 +4,15 @@ import java.io.IOException;
 import java.util.List;
 
 import dao.FavoriteDAO;
+import dao.ShareDAO;
+import dao.UserDAO;
 import dao.VideoDAO;
 import dao.impl.FavoriteDAOImpl;
+import dao.impl.ShareDAOImpl;
+import dao.impl.UserDAOImpl;
 import dao.impl.VideoDAOImpl;
 import entity.Favorite;
+import entity.Share;
 import entity.User;
 import entity.Video;
 import jakarta.servlet.ServletException;
@@ -27,6 +32,8 @@ public class Index extends HttpServlet {
 
 	private VideoDAO videoDAO = new VideoDAOImpl();
 	private FavoriteDAO favDao = new FavoriteDAOImpl();
+	private UserDAO userDao = new UserDAOImpl();
+	private ShareDAO shareDAO = new ShareDAOImpl();
 
 	public Index() {
 		// TODO Auto-generated constructor stub
@@ -51,6 +58,9 @@ public class Index extends HttpServlet {
 				req.setAttribute("page", "/views/admin/VideoManager.jsp");
 			} else if (uri.contains("/admin/userManager")) {
 				req.setAttribute("page", "/views/admin/UserManager.jsp");
+
+				List<User> list = userDao.findAll();
+				req.setAttribute("users", list);
 			} else if (uri.contains("/admin/video/edit")) {
 				req.setAttribute("page", "/views/admin/VideoManager.jsp");
 				req.setAttribute("subpage", "/views/admin/VideoDetails.jsp");
@@ -70,6 +80,32 @@ public class Index extends HttpServlet {
 
 				List<Video> list = videoDAO.findAll();
 				req.setAttribute("videos", list);
+			} else if (uri.contains("/admin/report")) {
+				req.setAttribute("page", "/views/admin/Report.jsp");
+
+				// 1. Lấy dữ liệu cho Tab 1 (Thống kê Favorites)
+				List<Object[]> listFav = favDao.reportFavorites();
+				req.setAttribute("favList", listFav);
+
+				// 2. Lấy dữ liệu cho dropdown Video (để chọn ở Tab 2 và Tab 3)
+				List<Video> videoList = videoDAO.findAll();
+				req.setAttribute("videos", videoList);
+
+				// 3. Xử lý Tab 2: Lọc người thích theo Video
+				String videoUserId = req.getParameter("videoUserId"); // Lấy ID video từ dropdown tab 2
+				if (videoUserId != null && !videoUserId.isEmpty()) {
+					List<Favorite> favUsers = favDao.findByVideoId(videoUserId);
+					req.setAttribute("favUsers", favUsers);
+					req.setAttribute("videoUserId", videoUserId); // Giữ lại giá trị đã chọn
+				}
+
+				// 4. Xử lý Tab 3: Lọc người share theo Video
+				String videoShareId = req.getParameter("videoShareId"); // Lấy ID video từ dropdown tab 3
+				if (videoShareId != null && !videoShareId.isEmpty()) {
+					List<Share> shareList = shareDAO.findByVideoId(videoShareId);
+					req.setAttribute("shareList", shareList);
+					req.setAttribute("videoShareId", videoShareId); // Giữ lại giá trị đã chọn
+				}
 			}
 		}
 
@@ -93,7 +129,12 @@ public class Index extends HttpServlet {
 				// Lưu ý: Để tối ưu nên viết hàm count() trong DAO, nhưng tạm thời dùng
 				// findAll().size()
 				List<Video> allVideos = videoDAO.findAll();
-				int totalVideos = allVideos.size();
+				int totalVideos = 0;
+				for (Video v : allVideos) {
+					if (Boolean.TRUE.equals(v.getActive())) {
+						totalVideos++;
+					}
+				}
 				int maxPage = (int) Math.ceil((double) totalVideos / pageSize);
 
 				// Kiểm tra nếu page vượt quá maxPage
