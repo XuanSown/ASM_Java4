@@ -3,8 +3,11 @@ package servlet;
 import java.io.IOException;
 import java.util.List;
 
+import dao.FavoriteDAO;
 import dao.VideoDAO;
+import dao.impl.FavoriteDAOImpl;
 import dao.impl.VideoDAOImpl;
+import entity.Favorite;
 import entity.User;
 import entity.Video;
 import jakarta.servlet.ServletException;
@@ -13,8 +16,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet({ "/home", "/admin/videoManager", "/admin/userManager", "/admin/report", "/admin/video/list",
-		"/admin/video/details" })
+@WebServlet({ "/home", "/video/detail", "/admin/videoManager", "/admin/userManager", "/admin/report",
+		"/admin/video/list", "/admin/video/details", "/admin/video/edit" })
 public class Index extends HttpServlet {
 
 	/**
@@ -23,6 +26,7 @@ public class Index extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	private VideoDAO videoDAO = new VideoDAOImpl();
+	private FavoriteDAO favDao = new FavoriteDAOImpl();
 
 	public Index() {
 		// TODO Auto-generated constructor stub
@@ -47,12 +51,25 @@ public class Index extends HttpServlet {
 				req.setAttribute("page", "/views/admin/VideoManager.jsp");
 			} else if (uri.contains("/admin/userManager")) {
 				req.setAttribute("page", "/views/admin/UserManager.jsp");
+			} else if (uri.contains("/admin/video/edit")) {
+				req.setAttribute("page", "/views/admin/VideoManager.jsp");
+				req.setAttribute("subpage", "/views/admin/VideoDetails.jsp");
+
+				// Lấy id cần sửa
+				String id = req.getParameter("id");
+				Video video = videoDAO.findById(id);
+				req.setAttribute("video", video);
+				req.setAttribute("isEdit", true); // báo hiệu đang sửa
 			} else if (uri.contains("/admin/video/details")) {
 				req.setAttribute("page", "/views/admin/VideoManager.jsp");
 				req.setAttribute("subpage", "/views/admin/VideoDetails.jsp");
+				req.setAttribute("isEdit", false); // báo hiệu thêm mới
 			} else if (uri.contains("/admin/video/list")) {
 				req.setAttribute("page", "/views/admin/VideoManager.jsp");
 				req.setAttribute("subpage", "/views/admin/VideoList.jsp");
+
+				List<Video> list = videoDAO.findAll();
+				req.setAttribute("videos", list);
 			}
 		}
 
@@ -70,7 +87,7 @@ public class Index extends HttpServlet {
 					}
 				}
 				// So luong video moi trang
-				int pageSize = 9;
+				int pageSize = 6;
 
 				// 3. Tính tổng số video và tổng số trang
 				// Lưu ý: Để tối ưu nên viết hàm count() trong DAO, nhưng tạm thời dùng
@@ -96,6 +113,38 @@ public class Index extends HttpServlet {
 				req.setAttribute("currentPage", page);
 				req.setAttribute("maxPage", maxPage);
 				req.setAttribute("page", "/views/user/home.jsp");
+			}
+
+			// Video detail
+			else if (uri.contains("/video/detail")) {
+				String id = req.getParameter("id");
+				if (id != null) {
+					Video video = videoDAO.findById(id);
+					if (video != null) {
+						videoDAO.increaseViews(id); // tăng lượt xem
+						video.setViews(video.getViews() + 1); // cập nhật lại view
+						req.setAttribute("item", video);
+
+						// lấy ngẫu nhiên video trong danh sách hoặc mới nhất
+						// để hiện thị ở sidebar
+						List<Video> list = videoDAO.findAll(1, 5); // lấy 5 video ở trang 1
+						req.setAttribute("recommendations", list);
+						req.setAttribute("page", "/views/user/video-detail.jsp");
+					} else {
+						resp.sendRedirect(req.getContextPath() + "/home");
+						return;
+					}
+					// Kiểm tra user đã like chưa để hiện thị nút
+					User currentUser = (User) req.getSession().getAttribute("currentUser");
+					boolean isLiked = false;
+					if (currentUser != null) {
+						Favorite fav = favDao.findByUserIdAndVideoId(currentUser.getId(), video.getId());
+						if (fav != null) {
+							isLiked = true;
+						}
+					}
+					req.setAttribute("isLiked", isLiked);
+				}
 			}
 		}
 		req.getRequestDispatcher(layout).forward(req, resp);

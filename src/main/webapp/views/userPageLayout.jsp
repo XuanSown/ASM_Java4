@@ -87,7 +87,7 @@
 
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link fw-semibold" href="#"></i> Yêu thích</a>
+                        <a class="nav-link fw-semibold" href="${pageContext.request.contextPath}/favorites"></i> Yêu thích</a>
                     </li>
                     <li class="nav-item me-2">
                         <a class="nav-link fw-semibold" href="#"></i> Thịnh hành</a>
@@ -181,6 +181,36 @@
         </div>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+	<!-- thông báo like -->
+	<c:if test="${not empty sessionScope.toastMessage}">
+        <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1055;">
+            <div id="liveToast" class="toast show align-items-center text-white bg-${sessionScope.toastType} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${sessionScope.toastMessage}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            // Tự động ẩn Toast sau 3 giây
+            setTimeout(function() {
+                var toastElement = document.getElementById('liveToast');
+                if (toastElement) {
+                    var bsToast = new bootstrap.Toast(toastElement);
+                    bsToast.hide();
+                }
+            }, 3000);
+        </script>
+
+        <%
+            session.removeAttribute("toastMessage");
+            session.removeAttribute("toastType");
+        %>
+    </c:if>
 
 </body>
 </html>

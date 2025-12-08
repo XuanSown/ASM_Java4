@@ -6,6 +6,7 @@ import dao.VideoDAO;
 import entity.Video;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import util.XJPA;
 
@@ -124,6 +125,28 @@ public class VideoDAOImpl implements VideoDAO {
 		EntityManager em = XJPA.getEntityManager();
 		try {
 			return em.find(Video.class, id);
+		} finally {
+			em.close();
+		}
+	}
+
+	@Override
+	public void increaseViews(String id) {
+		// TODO Auto-generated method stub
+		EntityManager em = XJPA.getEntityManager();
+		EntityTransaction trans = em.getTransaction();
+		try {
+			trans.begin();
+			// update để tăng view trực tiếp
+			String jpql = "update Video v set v.views = v.views + 1 where v.id = :id";
+			Query query = em.createQuery(jpql);
+			query.setParameter("id", id);
+			query.executeUpdate();
+			trans.commit();
+		} catch (Exception e) {
+			// TODO: handle exception
+			trans.rollback();
+			throw e;
 		} finally {
 			em.close();
 		}

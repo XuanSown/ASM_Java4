@@ -18,4 +18,7 @@ public interface VideoDAO {
 	List<Video> findByTitle(String keyword);
 
 	Video findById(String id);
+
+	// Hàm tăng view
+	void increaseViews(String id);
 }
